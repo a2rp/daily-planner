@@ -14,7 +14,7 @@ Choose a date to switch the plan. Add a task with a time; entries sort by time. 
 
 ## Data and limits
 
-Daily blocks and the notes field are stored in localStorage in the current browser. They remain on this device and are not synced. Browser data clearing removes them.
+Daily blocks and date-specific working notes are stored in localStorage in the current browser. They remain on this device and are not synced. If storage is unavailable or corrupted, the planner stays usable for the current page and shows a warning. Browser data clearing removes saved plans.
 
 ## Run locally
 
