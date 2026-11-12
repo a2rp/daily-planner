@@ -97,6 +97,7 @@ const makeId = () =>
 const DailyPlanner = () => {
     const [items, setItems] = useState(loadItems);
     const [date, setDate] = useState(isoToday);
+    const [today, setToday] = useState(isoToday);
     const [title, setTitle] = useState("");
     const [time, setTime] = useState("09:00");
     const [notesByDate, setNotesByDate] = useState(loadNotesByDate);
@@ -106,6 +107,18 @@ const DailyPlanner = () => {
     const dialogRef = useRef(null);
     const scheduleHeadingRef = useRef(null);
     const notes = notesByDate[date] || "";
+
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            const nextToday = getLocalDate(new Date());
+            if (nextToday === today) return;
+            setToday(nextToday);
+            setDate((currentDate) =>
+                currentDate === today ? nextToday : currentDate,
+            );
+        }, 60_000);
+        return () => window.clearInterval(interval);
+    }, [today]);
 
     const persist = (storageKey, value) => {
         try {
@@ -203,11 +216,11 @@ const DailyPlanner = () => {
     return <section className={styles.dailyPage} id="today">
         {storageWarning && <p className={styles.storageWarning} role="status" aria-live="polite">Browser storage is unavailable or invalid. Your plan will work for this page, but changes may not persist after you leave.</p>}
         <div className={styles.topline}>
-            <div><p className={styles.label}>A little structure, a lot of room</p><h1>{date === isoToday ? "Make today count." : "Make this day count."}</h1></div>
+            <div><p className={styles.label}>A little structure, a lot of room</p><h1>{date === today ? "Make today count." : "Make this day count."}</h1></div>
             <label className={styles.datePicker}>Choose a day<input type="date" value={date} onChange={(event) => { if (event.target.value) setDate(event.target.value); }} /></label>
         </div>
         <div className={styles.summary}>
-            <div><span>{date === isoToday ? "Today" : "Selected day"}</span><strong>{prettyDate}</strong></div>
+            <div><span>{date === today ? "Today" : "Selected day"}</span><strong>{prettyDate}</strong></div>
             <div className={styles.progress}><span>{done} of {todayItems.length} done</span><div><i style={{ width: todayItems.length ? (done / todayItems.length * 100) + "%" : "0%" }} /></div></div>
             <p><FiClock aria-hidden="true" /> Keep a pace you can sustain</p>
         </div>
